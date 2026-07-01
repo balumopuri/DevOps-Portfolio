@@ -1,0 +1,3 @@
+BACKEND_HOST: "backend.app-{{ ENVIRONMENT }}.daws82s.online"
+APP_LOCAION: /usr/share/nginx/html
+COMPONENT: frontend

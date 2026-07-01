@@ -1,0 +1,25 @@
+- name: install nginx server
+  ansible.builtin.dnf:
+    name: nginx
+    state: installed
+
+- name: enable and start nginx
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: yes
+  
+- name: include common role
+  include_role:
+    name: common
+    #tasks_from: main
+
+
+# trigger handler through notify
+- name: copy expense config
+  ansible.builtin.template:
+    src: expense.conf.j2
+    dest: /etc/nginx/default.d/expense.conf
+  notify: 
+  - Restart Nginx
+  
