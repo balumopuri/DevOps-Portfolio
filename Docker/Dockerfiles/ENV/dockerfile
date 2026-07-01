@@ -1,5 +1,5 @@
 FROM almalinux:9
 RUN dnf install nginx -y
-ENV project = "DevOps with AWS"
-    duration = "120hrs"
-    trainer = "Siva R"
+ENV project = "DevOps with AWS" \
+    duration = "120hrs" \
+    trainer = "Siva R" \
