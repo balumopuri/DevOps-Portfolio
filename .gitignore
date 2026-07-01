@@ -1,0 +1,42 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+crash.log
+*.tfvars
+*.tfvars.json
+.terraform.lock.hcl
+
+# Docker
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Node
+node_modules/
+
+# Secrets
+*.pem
+*.key
+*.ppk
+*.env
+
+cat > .gitignore << 'EOF'
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+.terraform.lock.hcl
+EOF

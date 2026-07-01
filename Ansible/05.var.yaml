@@ -1,0 +1,11 @@
+- name: variables
+  hosts: local
+  connection: local
+  vars:   #Playlevl variables
+    COURSE: Devops with AWS
+    DURATION: 3 months
+    TRAINER: Siva
+  tasks:
+  - name: print the value of variable
+    ansible.builtin.debug: 
+      msg: " {{ COURSE }} - {{ DURATION }} - {{ TRAINER }}"

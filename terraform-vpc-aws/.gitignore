@@ -1,0 +1,17 @@
+/.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+*.backup
+*.pem
+*.key
+*.log
+/.vscode/
+/.idea/
+/.DS_Store
+*.tfvars
+.terraform/
+VPC-module-test/.terraform/
+VPC-module-test/.terraform.lock.hcl
+VPC-module-test/terraform.tfstate
+VPC-module-test/errored.tfstate

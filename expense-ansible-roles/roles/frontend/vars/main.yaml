@@ -1,0 +1,3 @@
+BACKEND_HOST: backend.balaportfolio.space
+APP_LOCATION: /usr/share/nginx/html
+COMPONENT: frontend
