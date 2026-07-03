@@ -1,7 +1,0 @@
-FROM almalinux:9
-ENV course = "Devops with AWS" \
-    trainer = "siva" \
-    duration = "4months" 
-ARG USERNAME=BaluMopuri
-RUN echo "Hello ${USERNAME}" > /tmp/devops.txt
-CMD ["sleep","110"]

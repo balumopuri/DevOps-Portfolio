@@ -16,6 +16,11 @@ variable "instance_type" {
     } 
 }
 
+variable "region" {
+    description = "AWS region to deploy resources in"
+    default     = "us-east-1"
+}
+
 # optional
 variable "tags" {
     default = {}
