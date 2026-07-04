@@ -1,43 +1,33 @@
 resource "aws_instance" "this" {
-  ami                    = "ami-0220d79f3f480ecf5" # devops-practice AMI
+  ami                    = "ami-0220d79f3f480ecf5" # This is our devops-practice AMI ID
+  vpc_security_group_ids = [aws_security_group.allow_all_docker.id]
   instance_type          = "t3.micro"
-  vpc_security_group_ids = [aws_security_group.allow_tls.id]
 
-  user_data = <<-EOF
-    #!/bin/bash
-    sudo dnf install -y dnf-plugins-core
-    sudo dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
-    sudo dnf install -y docker-ce docker-ce-cli containerd.io
-    sudo systemctl start docker
-    sudo systemctl enable docker
-  EOF
-
+  # 20GB is not enough
+  root_block_device {
+    volume_size = 50  # Set root volume size to 50GB
+    volume_type = "gp3"  # Use gp3 for better performance (optional)
+  }
+  user_data = file("docker.sh")
   tags = {
     Name    = "docker"
   }
 }
 
-resource "aws_security_group" "allow_tls" {
-  name        = "allow_tls_df"
-  description = "Allow SSH, HTTP, and 8080 inbound; all outbound"
+resource "aws_security_group" "allow_all_docker" {
+  name        = "allow_all_docker"
+  description = "Allow TLS inbound traffic and all outbound traffic"
 
   ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
     from_port   = 80
     to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 8080
-    to_port     = 8080
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -53,7 +43,6 @@ resource "aws_security_group" "allow_tls" {
     Name = "allow_tls"
   }
 }
-
-output "aws_instance_public_ip" {
-  value = aws_instance.this.public_ip
+output "docker_ip" {
+  value       = aws_instance.this.public_ip
 }
