@@ -7,30 +7,27 @@ volumes:
   mysql: {}
 
 services:
-  mysql:
-    build: ./mysql
-    image: mysql:1.0.0
-    container_name: mysql
-    networks:
-      - expense
-    volumes:
-      - mysql:/var/lib/mysql
-
   backend:
-    build: ./backend
     image: backend:1.0.0
-    container_name: backend
     networks:
       - expense
+    container_name: backend
     depends_on:
       - mysql
 
-  frontend:
-    build: ./frontend
-    image: frontend:1.0.0
-    container_name: frontend
+  mysql:
+    image: mysql:1.0.0
     networks:
       - expense
+    container_name: mysql
+    volumes:
+      - mysql:/var/lib/mysql
+
+  frontend:
+    image: frontend:1.0.0
+    networks:
+      - expense
+    container_name: frontend
     ports:
       - "80:80"
     depends_on:
