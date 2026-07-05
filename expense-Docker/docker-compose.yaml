@@ -8,7 +8,7 @@ volumes:
 
 services:
   backend:
-    image: backend:1.0.0
+    image:  balumopuri19/backend.1.0.0
     command: sh -c "sleep 5 && node /opt/backend/index.js"
     environment:
       - DB_HOST=mysql
@@ -19,7 +19,7 @@ services:
       - mysql
 
   mysql:
-    image: mysql:1.0.0
+    image: balumopuri19/mysql:1.0.0
     networks:
       - expense
     container_name: mysql
@@ -27,7 +27,7 @@ services:
       - mysql:/var/lib/mysql
 
   frontend:
-    image: frontend:1.0.0
+    image: balumopuri19/frontend:1.0.0 
     networks:
       - expense
     container_name: frontend
