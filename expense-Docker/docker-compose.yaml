@@ -7,7 +7,7 @@ services:
     image: backend:1.0.0
     networks:
     - expense
-    container_names: backend
+    container_name: backend
     depends_on:
     - mysql
   # docker run -d --name mysql --network expense -v mysql:/var/lib/mysql mysql:1.0.0
