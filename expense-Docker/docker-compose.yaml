@@ -30,6 +30,6 @@ services:
       - expense
     container_name: frontend
     ports:
-      - "80:80"
+      - "80:8080"
     depends_on:
       - backend
