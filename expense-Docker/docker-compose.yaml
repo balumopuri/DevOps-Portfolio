@@ -10,6 +10,8 @@ services:
   backend:
     image: backend:1.0.0
     command: sh -c "sleep 5 && node /opt/backend/index.js"
+    environment:
+      - DB_HOST=mysql
     networks:
       - expense
     container_name: backend
