@@ -78,4 +78,4 @@ spec:
 
     # Optional
     # Uncomment only if using NodePort
-    # nodePort: 30008
+    nodePort: 30007
