@@ -49,34 +49,39 @@ fi
 # ---------------------------------------
 # eksctl installation
 # ---------------------------------------
-dnf install -y unzip
+# NOTE: The Linux release asset from eksctl-io is a .tar.gz (NOT .zip),
+# and the OS portion of the filename is capitalized: "Linux", not "linux".
+# .zip is only used for the Windows asset. Using the wrong name/extension
+# returns a GitHub 404 ("Not Found") rather than a real binary.
+EKSCTL_OS=Linux
+EKSCTL_PLATFORM=${EKSCTL_OS}_${ARCH}
 
 echo "=== Downloading eksctl ==="
-curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.zip"
+curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_${EKSCTL_PLATFORM}.tar.gz"
 
-# Verify the downloaded file is actually a zip before attempting to unzip it
-FILETYPE=$(file --brief eksctl_$PLATFORM.zip 2>/dev/null || echo "unknown")
+# Verify the downloaded file is actually a gzip archive before attempting to extract it
+FILETYPE=$(file --brief eksctl_${EKSCTL_PLATFORM}.tar.gz 2>/dev/null || echo "unknown")
 echo "Downloaded file type: $FILETYPE"
 
-if [[ "$FILETYPE" != Zip* ]]; then
-    echo "ERROR: eksctl download did not return a valid zip file."
+if [[ "$FILETYPE" != gzip* ]]; then
+    echo "ERROR: eksctl download did not return a valid gzip archive."
     echo "First 300 bytes of the downloaded file for diagnosis:"
-    head -c 300 eksctl_$PLATFORM.zip
+    head -c 300 eksctl_${EKSCTL_PLATFORM}.tar.gz
     echo ""
     echo "This usually means GitHub returned an error page instead of the binary"
     echo "(possible outbound network/firewall/security-group restriction to github.com"
-    echo "or githubusercontent.com release asset CDN). Retrying once..."
+    echo "or release-assets.githubusercontent.com CDN). Retrying once..."
 
-    rm -f eksctl_$PLATFORM.zip
-    curl -sL -o eksctl_$PLATFORM.zip "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.zip"
-    FILETYPE=$(file --brief eksctl_$PLATFORM.zip 2>/dev/null || echo "unknown")
+    rm -f eksctl_${EKSCTL_PLATFORM}.tar.gz
+    curl -sL -o eksctl_${EKSCTL_PLATFORM}.tar.gz "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_${EKSCTL_PLATFORM}.tar.gz"
+    FILETYPE=$(file --brief eksctl_${EKSCTL_PLATFORM}.tar.gz 2>/dev/null || echo "unknown")
     echo "Retry downloaded file type: $FILETYPE"
 fi
 
-if [[ "$FILETYPE" == Zip* ]]; then
+if [[ "$FILETYPE" == gzip* ]]; then
     mkdir -p /tmp/eksctl-install
-    unzip -o eksctl_$PLATFORM.zip -d /tmp/eksctl-install
-    rm -f eksctl_$PLATFORM.zip
+    tar -xzf eksctl_${EKSCTL_PLATFORM}.tar.gz -C /tmp/eksctl-install
+    rm -f eksctl_${EKSCTL_PLATFORM}.tar.gz
 
     if [ -f /tmp/eksctl-install/eksctl ]; then
         chmod +x /tmp/eksctl-install/eksctl
@@ -84,7 +89,7 @@ if [[ "$FILETYPE" == Zip* ]]; then
         echo "eksctl moved to /usr/local/bin successfully"
         /usr/local/bin/eksctl version
     else
-        echo "ERROR: eksctl binary not found inside extracted zip"
+        echo "ERROR: eksctl binary not found inside extracted archive"
         ls -la /tmp/eksctl-install
     fi
 else
@@ -101,5 +106,5 @@ echo "======================================"
 echo "           INSTALL SUMMARY"
 echo "======================================"
 echo -n "Docker : "; docker --version 2>/dev/null || echo "NOT INSTALLED"
-echo -n "kubectl: "; kubectl version --client 2>/dev/null || echo "NOT INSTALLED"
-echo -n "eksctl : "; eksctl version 2>/dev/null || echo "NOT INSTALLED"
+echo -n "kubectl: "; /usr/local/bin/kubectl version --client 2>/dev/null || echo "NOT INSTALLED"
+echo -n "eksctl : "; /usr/local/bin/eksctl version 2>/dev/null || echo "NOT INSTALLED"
