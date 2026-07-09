@@ -2,6 +2,7 @@ kind: service
 apiVersion: v1
 metadata:
   name: nginx
+  image: nginx
 spec:
   selectors:
     labels:
