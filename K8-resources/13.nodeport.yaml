@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx-NodePort
+  name: nginx-np
 spec:
   type: NodePort
   selector:
@@ -9,7 +9,7 @@ spec:
     component: backend
     version: "1.0.0"
     environment: dev
-    demo: NP
+    demo: np 
   ports:
   - protocol: TCP
     port: 80
@@ -19,7 +19,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: backend-Np
+  name: backend-np 
   labels:
     project: expense-app
     component: backend
