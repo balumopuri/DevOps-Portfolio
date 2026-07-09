@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: joindevops/deployment:2.0
+        image:  balumopuri19/deploment:1.0.0
         ports:
         - containerPort: 80
 ---
