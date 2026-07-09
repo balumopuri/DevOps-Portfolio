@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: nginx-lb
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     project: expense-app
     component: backend
@@ -14,6 +14,7 @@ spec:
   - protocol: TCP
     port: 80
     targetPort: 80
+    NodePort: 30007
 
 ---
 apiVersion: v1
