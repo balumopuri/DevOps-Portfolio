@@ -1,5 +1,5 @@
-kind: Service
 apiVersion: v1
+kind: Service
 metadata:
   name: nginx
 spec:
@@ -13,8 +13,9 @@ spec:
     port: 80
     targetPort: 80
 
-kind: Pod
+---
 apiVersion: v1
+kind: Pod
 metadata:
   name: backend
   labels:
