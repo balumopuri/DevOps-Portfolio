@@ -1,25 +1,33 @@
-apiVersion: apps/v1
-kind: Deployment
+# -----------------------------
+# Deployment Definition
+# -----------------------------
+apiVersion: apps/v1          # API version for Deployment
+kind: Deployment             # Resource type
 metadata:
-  name: nginx
+  name: nginx                # Deployment name
 
-# labels of deployment resources
+  # Labels for the Deployment object
   labels:
     app: nginx
     tier: frontend
     purpose: deployment
 
 spec:
+  # Desired number of Pod replicas
   replicas: 3
 
+  # Deployment identifies and manages Pods using these labels
   selector:
     matchLabels:
       app: nginx
       tier: frontend
       purpose: deployment
 
+  # Pod template - defines how each Pod should be created
   template:
     metadata:
+      # Labels applied to every Pod
+      # These MUST match the selector above
       labels:
         app: nginx
         tier: frontend
@@ -27,24 +35,47 @@ spec:
 
     spec:
       containers:
-      - name: nginx
-        image: balumopuri19/deploment:1.0.0
-        ports:
-        - containerPorts: 80
----
+      - name: nginx                    # Container name
+        image: balumopuri19/deploment:1.0.0   # Docker image
 
+        # Port exposed by the container
+        ports:
+        - containerPort: 80
+
+---
+# -----------------------------
+# Service Definition
+# -----------------------------
 apiVersion: v1
 kind: Service
 metadata:
   name: nginx
+
 spec:
+  # Service type
+  # ClusterIP  -> Internal access only
+  # NodePort  -> Access using NodeIP:NodePort
+  # LoadBalancer -> Cloud Load Balancer (AWS/Azure/GCP)
   type: LoadBalancer
+
+  # Service sends traffic only to Pods
+  # having these labels
   selector:
     app: nginx
     tier: frontend
     purpose: deployment
+
   ports:
   - protocol: TCP
+
+    # Service Port
+    # Clients connect to this port
     port: 80
+
+    # Container Port
+    # Traffic is forwarded to this port
     targetPort: 80
-    nodePort: 30007
+
+    # Optional
+    # Uncomment only if using NodePort
+    # nodePort: 30008
