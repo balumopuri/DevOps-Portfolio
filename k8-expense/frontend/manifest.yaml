@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: expense-uat
+  labels:
+    app: frontend
+    tier: frontend
+    purpose: expense-uat
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: frontend
+      tier: frontend
+      purpose: expense-uat
+
+  template:
+    metadata:
+      labels:
+        app: frontend
+        tier: frontend
+        purpose: expense-uat
+
+    spec:
+      containers:
+      - name: frontend
+        image: balumopuri19/frontend:1.0.0
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: expense-uat
+spec:
+  type: LoadBalancer
+  selector:
+    app: frontend
+    tier: frontend
+    purpose: expense-uat
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
