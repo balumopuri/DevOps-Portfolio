@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: balumopuri19/backend:1.0.0
+        image: balumopuri19/backend.1.0.0
 ---
 
 apiVersion: v1
