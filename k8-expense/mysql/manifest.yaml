@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  namespace: expense-uat 
+  # labels of deployment resource
+  labels:
+    app: mysql 
+    tier: mysql 
+    purpose: expense-uat 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+    app: mysql 
+    tier: mysql 
+    purpose: expense-uat 
+  template:
+    metadata:
+      labels:
+      app: mysql 
+      tier: mysql 
+      purpose: expense-uat 
+    spec:
+      containers:
+      - name: nginx
+        image:  balumopuri19/mysql:1.0.0 
