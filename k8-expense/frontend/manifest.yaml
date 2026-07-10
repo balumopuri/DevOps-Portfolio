@@ -28,6 +28,8 @@ spec:
       containers:
       - name: frontend
         image: balumopuri19/frontend:1.0.0
+        ports:
+        - containerPort: 8080
 ---
 
 apiVersion: v1
