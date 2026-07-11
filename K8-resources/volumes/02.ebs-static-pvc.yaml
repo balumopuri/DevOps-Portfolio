@@ -20,7 +20,7 @@ metadata:
     purpose: "ebs-static-demo"
 spec:
   nodeSelector:
-    topology.kubernetes.io/zone: us-east-1b
+    topology.kubernetes.io/zone: us-east-1a
   containers:
   - name: nginx
     image: nginx
