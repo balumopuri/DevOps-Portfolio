@@ -3,3 +3,4 @@ name: nginx
 version: 1.0.0  #chart version
 description: This is nginx version
 appversion: 1.2.0 #this is app verison
+#This is chart file
