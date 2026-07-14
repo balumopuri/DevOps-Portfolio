@@ -1,116 +1,165 @@
 #!/bin/bash
-set -uo pipefail
+set -Eeuo pipefail
 
 ARCH=amd64
-PLATFORM=linux_$ARCH
+K8S_VERSION="1.32.0"
+K8S_RELEASE_DATE="2024-12-20"
 
-# ---------------------------------------
+#---------------------------------------
+# Root check
+#---------------------------------------
+if [[ $EUID -ne 0 ]]; then
+    echo "ERROR: This script must be run as root."
+    exit 1
+fi
+
+#---------------------------------------
+# Install prerequisites
+#---------------------------------------
+echo "=== Installing prerequisites ==="
+dnf -y install \
+    curl \
+    tar \
+    file \
+    cloud-utils-growpart \
+    dnf-plugins-core
+
+#---------------------------------------
 # Disk / LVM expansion
-# ---------------------------------------
-growpart /dev/nvme0n1 4
+#---------------------------------------
+echo "=== Expanding disk ==="
+
+growpart /dev/nvme0n1 4 || true
+
 lvextend -l +50%FREE /dev/RootVG/rootVol
 lvextend -l +50%FREE /dev/RootVG/varVol
+
 xfs_growfs /
 xfs_growfs /var
 
-# ---------------------------------------
+#---------------------------------------
 # Docker installation
-# ---------------------------------------
-dnf -y install dnf-plugins-core
-dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
-dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-systemctl start docker
-systemctl enable docker
-usermod -aG docker ec2-user
+#---------------------------------------
+echo "=== Installing Docker ==="
 
-echo "=== Docker version ==="
-docker --version || echo "WARNING: docker command not found after install"
+dnf config-manager \
+    --add-repo \
+    https://download.docker.com/linux/rhel/docker-ce.repo
 
-# ---------------------------------------
-# kubectl installation
-# ---------------------------------------
-cd ~ || exit 1
-echo "=== Downloading kubectl ==="
-curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.32.0/2024-12-20/bin/linux/amd64/kubectl
+dnf install -y \
+    docker-ce \
+    docker-ce-cli \
+    containerd.io \
+    docker-buildx-plugin \
+    docker-compose-plugin
 
-if [ ! -f ./kubectl ]; then
-    echo "ERROR: kubectl download failed - file not found after curl"
-else
-    chmod +x ./kubectl
-    mv ./kubectl /usr/local/bin/kubectl
-    if [ -f /usr/local/bin/kubectl ]; then
-        echo "kubectl moved to /usr/local/bin successfully"
-        /usr/local/bin/kubectl version --client
-    else
-        echo "ERROR: kubectl mv failed - check permissions on /usr/local/bin"
-    fi
+systemctl enable --now docker
+
+if ! systemctl is-active --quiet docker; then
+    echo "ERROR: Docker service failed to start."
+    exit 1
 fi
 
-# ---------------------------------------
+if id ec2-user &>/dev/null; then
+    usermod -aG docker ec2-user
+fi
+
+echo "Docker installed:"
+docker --version
+
+#---------------------------------------
+# kubectl installation
+#---------------------------------------
+echo "=== Installing kubectl ==="
+
+cd /tmp
+
+curl -fLo kubectl \
+"https://s3.us-west-2.amazonaws.com/amazon-eks/${K8S_VERSION}/${K8S_RELEASE_DATE}/bin/linux/${ARCH}/kubectl"
+
+FILETYPE=$(file --brief kubectl)
+
+if [[ "$FILETYPE" != *ELF* ]]; then
+    echo "ERROR: kubectl download is invalid."
+    exit 1
+fi
+
+chmod +x kubectl
+mv kubectl /usr/local/bin/
+
+echo "kubectl installed:"
+kubectl version --client
+
+#---------------------------------------
 # eksctl installation
-# ---------------------------------------
-# NOTE: The Linux release asset from eksctl-io is a .tar.gz (NOT .zip),
-# and the OS portion of the filename is capitalized: "Linux", not "linux".
-# .zip is only used for the Windows asset. Using the wrong name/extension
-# returns a GitHub 404 ("Not Found") rather than a real binary.
-EKSCTL_OS=Linux
-EKSCTL_PLATFORM=${EKSCTL_OS}_${ARCH}
+#---------------------------------------
+echo "=== Installing eksctl ==="
 
-echo "=== Downloading eksctl ==="
-curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_${EKSCTL_PLATFORM}.tar.gz"
+EKSCTL_PLATFORM="Linux_${ARCH}"
 
-# Verify the downloaded file is actually a gzip archive before attempting to extract it
-FILETYPE=$(file --brief eksctl_${EKSCTL_PLATFORM}.tar.gz 2>/dev/null || echo "unknown")
-echo "Downloaded file type: $FILETYPE"
+curl -fsSLo eksctl.tar.gz \
+"https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_${EKSCTL_PLATFORM}.tar.gz"
+
+FILETYPE=$(file --brief eksctl.tar.gz)
 
 if [[ "$FILETYPE" != gzip* ]]; then
-    echo "ERROR: eksctl download did not return a valid gzip archive."
-    echo "First 300 bytes of the downloaded file for diagnosis:"
-    head -c 300 eksctl_${EKSCTL_PLATFORM}.tar.gz
-    echo ""
-    echo "This usually means GitHub returned an error page instead of the binary"
-    echo "(possible outbound network/firewall/security-group restriction to github.com"
-    echo "or release-assets.githubusercontent.com CDN). Retrying once..."
-
-    rm -f eksctl_${EKSCTL_PLATFORM}.tar.gz
-    curl -sL -o eksctl_${EKSCTL_PLATFORM}.tar.gz "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_${EKSCTL_PLATFORM}.tar.gz"
-    FILETYPE=$(file --brief eksctl_${EKSCTL_PLATFORM}.tar.gz 2>/dev/null || echo "unknown")
-    echo "Retry downloaded file type: $FILETYPE"
+    echo "ERROR: Invalid eksctl archive downloaded."
+    exit 1
 fi
 
-if [[ "$FILETYPE" == gzip* ]]; then
-    mkdir -p /tmp/eksctl-install
-    tar -xzf eksctl_${EKSCTL_PLATFORM}.tar.gz -C /tmp/eksctl-install
-    rm -f eksctl_${EKSCTL_PLATFORM}.tar.gz
+mkdir -p /tmp/eksctl-install
 
-    if [ -f /tmp/eksctl-install/eksctl ]; then
-        chmod +x /tmp/eksctl-install/eksctl
-        mv /tmp/eksctl-install/eksctl /usr/local/bin/eksctl
-        echo "eksctl moved to /usr/local/bin successfully"
-        /usr/local/bin/eksctl version
-    else
-        echo "ERROR: eksctl binary not found inside extracted archive"
-        ls -la /tmp/eksctl-install
-    fi
-else
-    echo "ERROR: eksctl download still invalid after retry. Skipping install."
-    echo "Check outbound network access from this instance to github.com and"
-    echo "release-assets.githubusercontent.com (security groups / NACLs / proxy)."
-fi
+tar -xzf eksctl.tar.gz -C /tmp/eksctl-install
 
-#--------------------------------
+install -m 0755 \
+/tmp/eksctl-install/eksctl \
+/usr/local/bin/eksctl
 
-curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+rm -rf \
+/tmp/eksctl-install \
+eksctl.tar.gz
+
+echo "eksctl installed:"
+eksctl version
+
+#---------------------------------------
+# Helm installation
+#---------------------------------------
+echo "=== Installing Helm ==="
+
+
+
+curl -fsSL -o get_helm.sh \
+https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+
 chmod 700 get_helm.sh
-/get_helm.sh
 
-# ---------------------------------------
+./get_helm.sh
+
+rm -f get_helm.sh
+
+echo "Helm installed:"
+helm version --short
+
+#---------------------------------------
 # Final summary
-# ---------------------------------------
-echo ""
-echo "======================================"
-echo "           INSTALL SUMMARY"
-echo "======================================"
-echo -n "Docker : "; docker --version 2>/dev/null || echo "NOT INSTALLED"
-echo -n "kubectl: "; /usr/local/bin/kubectl version --client 2>/dev/null || echo "NOT INSTALLED"
-echo -n "eksctl : "; /usr/local/bin/eksctl version 2>/dev/null || echo "NOT INSTALLED"
+#---------------------------------------
+echo
+echo "========================================="
+echo "          INSTALLATION SUMMARY"
+echo "========================================="
+
+echo -n "Docker  : "
+docker --version
+
+echo -n "kubectl : "
+kubectl version --client
+
+echo -n "eksctl  : "
+eksctl version
+
+echo -n "Helm    : "
+helm version --short
+
+echo
+echo "Provisioning completed successfully."
