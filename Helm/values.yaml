@@ -2,4 +2,4 @@ deployment:
   replicas: 3
   imageversion: latest
 service:
-  nodeport: 3007
+  nodeport: 30007
