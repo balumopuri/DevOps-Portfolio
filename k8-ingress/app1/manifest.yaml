@@ -32,3 +32,28 @@ spec:
   - protocol: TCP
     port: 80 # service port
     targetPort: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app1
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:652942058685:certificate/4031395d-f2a7-4f09-9a1c-ab09a4845e27
+    alb.ingress.kubernetes.io/group.name: balumopuri19
+spec:
+  ingressClassName: alb
+  rules:
+  - host: "app1.balaportfolio.space"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: app1
+            port:
+              number: 80

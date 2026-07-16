@@ -1,7 +1,7 @@
 # Ingress Controller
 
 REGION_CODE=us-east-1
-CLUSTER_NAME=expense-app-uat
+CLUSTER_NAME=expense
 ACC_ID=652942058685
 
 ### Permissions
