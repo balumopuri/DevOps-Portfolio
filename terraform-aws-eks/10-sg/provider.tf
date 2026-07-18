@@ -8,13 +8,13 @@ terraform {
       version = "~> 5.0"
     }
   }
-  backend "s3"{
-    bucket = "terraform-module-expense-eks"
-    key = "expense-eks"
-    region = "us-east-1"
+  backend "s3" {
+    bucket         = "terraform-module-expense-dev"
+    key            = "expense-vpc"
+    region         = "us-east-1"
     dynamodb_table = "bala-terraform-prd"
   }
-  }
+}
 
 # Configure the provider
 provider "aws" {
