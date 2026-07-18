@@ -24,7 +24,7 @@ spec:
 
       containers:
       - name: fluentd-elasticsearch
-        image: quay.io/fluent/fluentd-kubernetes-daemonset:v1.19.0-debian-elasticsearch8-1.1
+        image: quay.io/fluent/fluentd-kubernetes-daemonset:v1-debian-elasticsearch8
         imagePullPolicy: IfNotPresent
 
         resources:
