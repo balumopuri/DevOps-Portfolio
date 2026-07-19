@@ -10,7 +10,7 @@ terraform {
   }
   backend "s3" {
     bucket         = "terraform-module-expense-dev"
-    key            = "expense-vpc"
+    key            = "expense-eks"
     region         = "us-east-1"
     dynamodb_table = "bala-terraform-prd"
   }
