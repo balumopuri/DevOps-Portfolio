@@ -3,7 +3,7 @@ module "db" {
   identifier = local.resource_name #expense-dev
 
   engine            = "mysql"
-  engine_version    = "8.4.8"
+  engine_version    = "8.0.43"
   instance_class    = "db.t4g.micro"
   allocated_storage = 20
 
