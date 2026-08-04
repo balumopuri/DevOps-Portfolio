@@ -5,9 +5,10 @@ resource "aws_instance" "this" {
 
   user_data = file("jenkins.sh")
   tags = {
-    Name    = "Jenkins"
+    Name = "Jenkins-Server"
   }
-  
+}
+
   # 20GB is not enough
   root_block_device {
     volume_size = 50  # Set root volume size to 50GB
@@ -27,8 +28,8 @@ resource "aws_security_group" "allow_all_docker" {
   }
 
   ingress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 8080
+    to_port     = 8080
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
