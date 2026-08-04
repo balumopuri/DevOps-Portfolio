@@ -17,7 +17,7 @@ resource "aws_instance" "this" {
 }
 
 resource "aws_security_group" "allow_all_docker" {
-  name        = "allow_all_docker"
+  name        = "allow_all_docker-all"
   description = "Allow Jenkins and SSH access"
 
   # SSH
