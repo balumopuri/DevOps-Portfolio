@@ -6,7 +6,8 @@ metadata:
   labels:
     app: backend
     tier: backend
-    purpose: expense-uat
+    project: expense
+    version: blue
 
 spec:
   replicas: 1
