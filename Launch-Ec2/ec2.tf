@@ -1,5 +1,5 @@
 resource "aws_instance" "jenkins" {
-  # ami                    = "ami-0220d79f3f480ecf5" # DevOps Practice AMI
+  ami                    = "ami-0220d79f3f480ecf5" # DevOps Practice AMI
   instance_type          = "t3.medium"
   vpc_security_group_ids = [aws_security_group.allow_all_docker.id]
 
