@@ -1,4 +1,7 @@
 #!/bin/bash
+
+source /workspaces/DevOps-Portfolio/color.sh
+
 ARCH=amd64
 PLATFORM=$(uname -s)_$ARCH
 HOME=/root

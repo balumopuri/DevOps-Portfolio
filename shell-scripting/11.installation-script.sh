@@ -1,9 +1,12 @@
 #!/bin/bash
 
+source /workspaces/DevOps-Portfolio/color.sh
+
+
 USERID=$(id -u)
 
 if [ "$USERID" -ne 0 ]; then
-    echo "Error:: You must have sudo (root) access to execute the script"
+    log "Error:: You must have sudo (root) access to execute the script"
     exit 1
 fi
 
@@ -17,7 +20,7 @@ if ! dnf repolist | grep -q mysql; then
     elif [ "$OS_VERSION" -eq 8 ]; then
         dnf install -y https://repo.mysql.com/mysql80-community-release-el8-1.noarch.rpm
     else
-        echo "Unsupported OS version"
+        log "Unsupported OS version"
         exit 1
     fi
 fi
@@ -27,13 +30,13 @@ dnf list installed mysql-community-server &>/dev/null
 if [ $? -ne 0 ]; then
     dnf install -y mysql-community-server
     if [ $? -ne 0 ]; then
-        echo "Installing MySQL.... FAILURE"
+        log "Installing MySQL.... FAILURE"
         exit 1
     else
-        echo "Installing MySQL.... SUCCESS"
+        log "Installing MySQL.... SUCCESS"
     fi
 else
-    echo "MySQL is already installed"
+    log "MySQL is already installed"
 fi
 
 # Install Git
@@ -41,11 +44,11 @@ dnf list installed git &>/dev/null
 if [ $? -ne 0 ]; then
     dnf install -y git
     if [ $? -ne 0 ]; then
-        echo "Installing Git.... FAILURE"
+        log "Installing Git.... FAILURE"
         exit 1
     else
-        echo "Installing Git.... SUCCESS"
+        log "Installing Git.... SUCCESS"
     fi
 else
-    echo "Git is already installed"
+    log "Git is already installed"
 fi

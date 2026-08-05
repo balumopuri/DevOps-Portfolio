@@ -1,11 +1,14 @@
 #!/bin/bash
 
-echo "All variables passed: $@"
-echo "Number of vaiables: $#"
-echo "Script name: $0"
-echo "Present working directory: $PWD"
-echo "Home dir of current user: $HOME"
-echo "which user is running the script: $USER"
-echo "process id of the script: $$"
+source /workspaces/DevOps-Portfolio/color.sh
+
+
+log "All variables passed: $@"
+log "Number of vaiables: $#"
+log "Script name: $0"
+log "Present working directory: $PWD"
+log "Home dir of current user: $HOME"
+log "which user is running the script: $USER"
+log "process id of the script: $$"
 sleep 5 &
-echo "process id of last command in background:$!"
+log "process id of last command in background:$!"

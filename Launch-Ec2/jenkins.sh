@@ -1,21 +1,37 @@
 #!/bin/bash
 
-dnf update -y
+# Add the Jenkins repository
+sudo wget -O /etc/yum.repos.d/jenkins.repo \
+https://pkg.jenkins.io/rpm-stable/jenkins.repo
 
-dnf install -y wget
+# Import the Jenkins GPG key
+sudo rpm --import https://pkg.jenkins.io/rpm-stable/jenkins.io-2023.key
 
-wget -O /etc/yum.repos.d/jenkins.repo \
-https://pkg.jenkins.io/redhat-stable/jenkins.repo
+# Update package metadata
+sudo yum makecache
 
-rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+# Upgrade installed packages (optional)
+sudo yum -y upgrade
 
-dnf install -y fontconfig java-17-openjdk
+# Install Java 21 and fontconfig
+sudo yum install -y fontconfig java-21-openjdk
 
-dnf install -y jenkins
+# Install Jenkins
+sudo yum install -y jenkins
 
-systemctl daemon-reload
-systemctl enable jenkins
-systemctl start jenkins
+# Reload systemd
+sudo systemctl daemon-reload
 
-firewall-cmd --permanent --add-port=8080/tcp
-firewall-cmd --reload
+# Enable Jenkins to start on boot
+sudo systemctl enable jenkins
+
+# Start Jenkins
+sudo systemctl start jenkins
+
+# Verify service status
+sudo systemctl status jenkins --no-pager
+
+# Display the initial admin password
+echo ""
+echo "Initial Jenkins Admin Password:"
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword

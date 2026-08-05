@@ -1,9 +1,12 @@
 #!/bin/bash
 
-echo "Balu: Hi Bro"
-echo "Rishi: Hi bro"
-echo "Balu: How are you?"
-echo "Rishi: All good, Thank you!"
-echo "Balu: i need smoething"
-echo "Rishi: What do you want?"
-echo "Balu: I want something to eat"
+source /workspaces/DevOps-Portfolio/color.sh
+
+
+log "Balu: Hi Bro"
+log "Rishi: Hi bro"
+log "Balu: How are you?"
+log "Rishi: All good, Thank you!"
+log "Balu: i need smoething"
+log "Rishi: What do you want?"
+log "Balu: I want something to eat"

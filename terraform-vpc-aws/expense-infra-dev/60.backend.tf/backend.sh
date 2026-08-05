@@ -1,5 +1,8 @@
 #!/bin/bash
 
+source /workspaces/DevOps-Portfolio/color.sh
+
+
 dnf install ansible -y
 
 ansible-pull \

@@ -1,11 +1,14 @@
 #!/bin/bash
 
-# echo "hello world"
-# echo "again hello world"
-# echo "Hi World from BM"
-# echo "Hi World"
+source /workspaces/DevOps-Portfolio/color.sh
 
 
-echo $NAME
+# log "hello world"
+# log "again hello world"
+# log "Hi World from BM"
+# log "Hi World"
+
+
+log $NAME
 NAME=$1
-echo "Hi World from $NAME"
+log "Hi World from $NAME"
