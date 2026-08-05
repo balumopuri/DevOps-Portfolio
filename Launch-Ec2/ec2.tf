@@ -49,6 +49,7 @@ resource "aws_security_group" "allow_all_docker" {
   }
 }
 
-output "jenkins_ip" {
-  value = aws_instance.this.public_ip
-}
+#output "jenkins_ip" {
+#  value = aws_instance.this.public_ip
+#}
+
