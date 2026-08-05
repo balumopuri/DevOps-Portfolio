@@ -1,9 +1,12 @@
 #!/bin/bash
 
-echo "Please enter Username::"
+source /workspaces/DevOps-Portfolio/color.sh
+
+
+log "Please enter Username::"
 
 read -s USERNAME
 
-echo "username entered: $USERNAME"
-echo "Please enter user password::"
+log "username entered: $USERNAME"
+log "Please enter user password::"
 read -s PASSWORD

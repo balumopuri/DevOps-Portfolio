@@ -1,3 +1,5 @@
+source /workspaces/DevOps-Portfolio/color.sh
+
 # #!/bin/bash
 
 # USERID=$(id -u)
@@ -15,16 +17,16 @@
 # VALIDATE(){
 #     if [ $1 -ne 0 ]
 #     then 
-#         echo -e "$2......{R} FAILED...${N}" >>"$LOG_FILE_NAME"
+#         log -e "$2......{R} FAILED...${N}" >>"$LOG_FILE_NAME"
 #         exit 1
 #     else   
-#         echo -e "$2 .... ${G}SUCCESS${N}" >> "$LOG_FILE_NAME"
+#         log -e "$2 .... ${G}SUCCESS${N}" >> "$LOG_FILE_NAME"
 #     fi
 # }
 
 # if [ $USERID -ne 0 ]
 # then
-#     echo -e "${R}Error:: You must have sudo/root access to execute this script${N}"
+#     log -e "${R}Error:: You must have sudo/root access to execute this script${N}"
 #     exit 1
 # fi
 
@@ -36,7 +38,7 @@
 #         dnf install $package -y &>>"$LOG_FILE_NAME"
 #         VALIDATE $? "iNSTALLING $package"
 #     else 
-#         echo -e "$package is already $(Y).....Installed $N"
+#         log -e "$package is already $(Y).....Installed $N"
 #     fi
 # done
 
@@ -66,27 +68,27 @@ mkdir -p "$LOG_FOLDER"
 VALIDATE() {
     if [ $1 -ne 0 ]
     then
-        echo -e "$2 .... ${R}FAILED${N}" >> "$LOG_FILE_NAME"
+        log -e "$2 .... ${R}FAILED${N}" >> "$LOG_FILE_NAME"
         exit 1
     else
-        echo -e "$2 .... ${G}SUCCESS${N}" >> "$LOG_FILE_NAME"
+        log -e "$2 .... ${G}SUCCESS${N}" >> "$LOG_FILE_NAME"
     fi
 }
 
 # Script start
-echo "Script execution started at: $TIMESTAMP" >> "$LOG_FILE_NAME"
+log "Script execution started at: $TIMESTAMP" >> "$LOG_FILE_NAME"
 
 # Check for root user
 if [ $USERID -ne 0 ]
 then
-    echo -e "${R}Error:: You must have sudo/root access to execute this script${N}"
+    log -e "${R}Error:: You must have sudo/root access to execute this script${N}"
     exit 1
 fi
 
 # Check if arguments are passed
 if [ $# -eq 0 ]
 then
-    echo -e "${Y}Usage:${N} $0 package1 package2 ..."
+    log -e "${Y}Usage:${N} $0 package1 package2 ..."
     exit 1
 fi
 
@@ -99,6 +101,6 @@ do
         dnf install "$package" -y &>> "$LOG_FILE_NAME"
         VALIDATE $? "Installing $package"
     else
-        echo -e "$package is already ${Y}Installed${N}"
+        log -e "$package is already ${Y}Installed${N}"
     fi
 done

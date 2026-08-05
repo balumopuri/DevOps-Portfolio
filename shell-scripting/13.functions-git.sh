@@ -1,19 +1,22 @@
 #!/bin/bash
 
+source /workspaces/DevOps-Portfolio/color.sh
+
+
 USERID=$(id -u)
 
 VALIDATE(){
     if [ $1 -ne 0 ]
         then 
-            echo "$2.... Failure"
+            log "$2.... Failure"
             exit 1
         else
-            echo "$2.....success"
+            log "$2.....success"
         fi
 }
 if [ $USERID -ne 0 ]
 then 
-    echo "Error:: you must have sudo access to execute the script"
+    log "Error:: you must have sudo access to execute the script"
     exit 1
 fi
 
@@ -23,5 +26,5 @@ fi
             dnf install git -y
          VALIDATE $2 "Installing GIT"
     else                 
-        echo "Git is already installed"
+        log "Git is already installed"
     fi

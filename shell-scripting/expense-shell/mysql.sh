@@ -1,5 +1,8 @@
 #!/bin/bash
 
+source /workspaces/DevOps-Portfolio/color.sh
+
+
 USERID=$(id -u)
 R="\e[31m"
 G="\e[32m"
@@ -7,29 +10,29 @@ Y="\e[33m"
 N="\e[0m"
 
 LOGS_FOLDER="/var/log/expense-logs"
-LOG_FILE=$(echo $0 | cut -d "." -f1 )
+LOG_FILE=$(log $0 | cut -d "." -f1 )
 TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)
 LOG_FILE_NAME="$LOGS_FOLDER/$LOG_FILE-$TIMESTAMP.log"
 
 VALIDATE(){
     if [ $1 -ne 0 ]
     then
-        echo -e "$2 ... $R FAILURE $N"
+        log -e "$2 ... $R FAILURE $N"
         exit 1
     else
-        echo -e "$2 ... $G SUCCESS $N"
+        log -e "$2 ... $G SUCCESS $N"
     fi
 }
 
 CHECK_ROOT(){
     if [ $USERID -ne 0 ]
     then
-        echo "ERROR:: You must have sudo access to execute this script"
+        log "ERROR:: You must have sudo access to execute this script"
         exit 1 #other than 0
     fi
 }
 
-echo "Script started executing at: $TIMESTAMP" &>>$LOG_FILE_NAME
+log "Script started executing at: $TIMESTAMP" &>>$LOG_FILE_NAME
 
 CHECK_ROOT
 
@@ -46,11 +49,11 @@ mysql -h mysql.balaportfolio.space -u root -pExpenseApp@1 -e 'show databases;' &
 
 if [ $? -ne 0 ]
 then
-    echo "MySQL Root password not setup" &>>$LOG_FILE_NAME
+    log "MySQL Root password not setup" &>>$LOG_FILE_NAME
     mysql_secure_installation --set-root-pass ExpenseApp@1
     VALIDATE $? "Setting Root Password"
 else
-    echo -e "MySQL Root password already setup ... $Y SKIPPING $N"
+    log -e "MySQL Root password already setup ... $Y SKIPPING $N"
 fi
 
 # #!/bin/bash
@@ -70,16 +73,16 @@ fi
 # # ---------------- Functions ----------------
 # VALIDATE() {
 #     if [ $1 -ne 0 ]; then
-#         echo -e "$2 ..... ${R}FAILURE${N}"
+#         log -e "$2 ..... ${R}FAILURE${N}"
 #         exit 1
 #     else
-#         echo -e "$2 ..... ${G}SUCCESS${N}"
+#         log -e "$2 ..... ${G}SUCCESS${N}"
 #     fi
 # }
 
 # CHECK_ROOT() {
 #     if [ "$(id -u)" -ne 0 ]; then
-#         echo -e "${R}ERROR: Please run this script as root or with sudo${N}"
+#         log -e "${R}ERROR: Please run this script as root or with sudo${N}"
 #         exit 1
 #     fi
 # }
@@ -88,14 +91,14 @@ fi
 # CHECK_ROOT
 # mkdir -p "$LOG_FOLDER"
 
-# echo "Script started at: $TIMESTAMP" &>>"$LOG_FILE_NAME"
+# log "Script started at: $TIMESTAMP" &>>"$LOG_FILE_NAME"
 
 # # ---------------- Root password to set ----------------
 # ROOT_DB_PASS="ExpenseApp@1"
 
 # # Try several methods to set the DB root password non-interactively.
 # SET_ROOT_PASS() {
-#     echo "Attempting to set DB root password" &>>"$LOG_FILE_NAME"
+#     log "Attempting to set DB root password" &>>"$LOG_FILE_NAME"
 
 #     # Method 1: ALTER USER (preferred for modern MySQL/MariaDB)
 #     mysql -u root --execute "ALTER USER 'root'@'localhost' IDENTIFIED BY '${ROOT_DB_PASS}'; FLUSH PRIVILEGES;" &>>"$LOG_FILE_NAME"
@@ -138,7 +141,7 @@ fi
 
 # # ---------------- OS Detection ----------------
 # OS_NAME=$(grep '^NAME=' /etc/os-release | cut -d= -f2 | tr -d '"')
-# echo "Detected OS: $OS_NAME" &>>"$LOG_FILE_NAME"
+# log "Detected OS: $OS_NAME" &>>"$LOG_FILE_NAME"
 
 # # ---------------- Package Manager Detection ----------------
 # if command -v dnf &>/dev/null; then
@@ -147,11 +150,11 @@ fi
 #     PKG_MGR="yum"
 # fi
 
-# echo "Using package manager: $PKG_MGR" &>>"$LOG_FILE_NAME"
+# log "Using package manager: $PKG_MGR" &>>"$LOG_FILE_NAME"
 
 # # ---------------- Database Installation ----------------
 # if [[ "$OS_NAME" == *"Amazon Linux"* ]]; then
-#     echo "Installing MariaDB on Amazon Linux" &>>"$LOG_FILE_NAME"
+#     log "Installing MariaDB on Amazon Linux" &>>"$LOG_FILE_NAME"
 
 #     $PKG_MGR clean all &>>"$LOG_FILE_NAME"
 #     $PKG_MGR makecache &>>"$LOG_FILE_NAME"
@@ -168,7 +171,7 @@ fi
 #     SET_ROOT_PASS &>>"$LOG_FILE_NAME"
 
 # elif [[ "$OS_NAME" == *"Red Hat"* || "$OS_NAME" == *"CentOS"* ]]; then
-#     echo "Installing MySQL on RHEL/CentOS" &>>"$LOG_FILE_NAME"
+#     log "Installing MySQL on RHEL/CentOS" &>>"$LOG_FILE_NAME"
 
 #     $PKG_MGR install mysql-server -y &>>"$LOG_FILE_NAME"
 #     VALIDATE $? "Installing MySQL server"
@@ -183,9 +186,9 @@ fi
 #     SET_ROOT_PASS &>>"$LOG_FILE_NAME"
 
 # else
-#     echo -e "${R}Unsupported OS detected: $OS_NAME${N}" | tee -a "$LOG_FILE_NAME"
+#     log -e "${R}Unsupported OS detected: $OS_NAME${N}" | tee -a "$LOG_FILE_NAME"
 #     exit 1
 # fi
 
-# echo -e "${G}Database installation completed successfully${N}"
-# echo "Script completed at: $(date)" &>>"$LOG_FILE_NAME"
+# log -e "${G}Database installation completed successfully${N}"
+# log "Script completed at: $(date)" &>>"$LOG_FILE_NAME"

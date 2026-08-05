@@ -1,5 +1,8 @@
 #!/bin/bash
 
+source /workspaces/DevOps-Portfolio/color.sh
+
+
 # Get User ID
 USERID=$(id -u)
 
@@ -22,20 +25,20 @@ mkdir -p $LOG_FOLDER
 VALIDATE() {
     if [ $1 -ne 0 ]
     then
-        echo -e "$2 .... ${R}FAILED${N}" >> "$LOG_FILE_NAME"
+        log -e "$2 .... ${R}FAILED${N}" >> "$LOG_FILE_NAME"
         exit 1
     else
-        echo -e "$2 .... ${G}SUCCESS${N}" >> "$LOG_FILE_NAME"
+        log -e "$2 .... ${G}SUCCESS${N}" >> "$LOG_FILE_NAME"
     fi
 }
 
 # Script start log
-echo "Script execution started at: $TIMESTAMP" >> "$LOG_FILE_NAME"
+log "Script execution started at: $TIMESTAMP" >> "$LOG_FILE_NAME"
 
 # Root user validation
 if [ $USERID -ne 0 ]
 then
-    echo -e "${R}Error:: You must have sudo/root access to execute this script${N}"
+    log -e "${R}Error:: You must have sudo/root access to execute this script${N}"
     exit 1
 fi
 
@@ -46,5 +49,5 @@ then
     dnf install git -y &>> "$LOG_FILE_NAME"
     VALIDATE $? "Installing Git"
 else
-    echo -e "${G}Git is already installed${N}"
+    log -e "${G}Git is already installed${N}"
 fi

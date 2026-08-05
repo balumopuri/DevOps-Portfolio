@@ -1,31 +1,34 @@
 #!/bin/bash
 
+source /workspaces/DevOps-Portfolio/color.sh
+
+
 # TIMESTAMP=$(date +"%Y-%m-%d-%H-%M-%S")
 
-# echo "Today Date is: $TIMESTAMP"
+# log "Today Date is: $TIMESTAMP"
 
-# echo "$(pwd)"
+# log "$(pwd)"
 
-# # echo "$( ls -a )"
+# # log "$( ls -a )"
 
-# echo "$( who )"
+# log "$( who )"
 
-# echo "$( uptime )"
+# log "$( uptime )"
 
-# echo "$( df -h / )"
+# log "$( df -h / )"
 
-# echo "$( ls -1 | wc -l )"
-# echo "$( head -n 4 16.Loops-install.sh )"
+# log "$( ls -1 | wc -l )"
+# log "$( head -n 4 16.Loops-install.sh )"
 
-# echo "$( grep | colors.sh )"
+# log "$( grep | colors.sh )"
 
-# echo "$( ps -ef )"
+# log "$( ps -ef )"
 
 # read  num
 # if [ $(( num % 2 )) -eq 0 ]; then
-#     echo "Number is Even"
+#     log "Number is Even"
 # else
-#     echo "Number is Odd"
+#     log "Number is Odd"
 # fi
 
 
@@ -33,9 +36,9 @@
 #     while [ $num -gt 0 ]; 
 # do
 #     num=$(( num - 1 ))
-#     echo $num
+#     log $num
 # done
-# echo "Lift off!"
+# log "Lift off!"
 
 BACKUP_FOLDER=~/backups
 FILENAME=$(basename "$1")
@@ -45,9 +48,9 @@ BACKUP_NAME="${FILENAME%.*}_${TIMESTAMP}.${FILENAME##*.}"
 if [ -f "$1" ]; then
     mkdir -p "$BACKUP_FOLDER"
     cp "$1" "$BACKUP_FOLDER/$BACKUP_NAME"
-    echo "Backed up $FILENAME to $BACKUP_FOLDER/$BACKUP_NAME"
+    log "Backed up $FILENAME to $BACKUP_FOLDER/$BACKUP_NAME"
 else
-    echo "Error: '$1' does not exist"
+    log "Error: '$1' does not exist"
     exit 1
 fi
 

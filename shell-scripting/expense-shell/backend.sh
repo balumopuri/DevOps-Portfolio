@@ -1,5 +1,8 @@
 #!/bin/bash
 
+source /workspaces/DevOps-Portfolio/color.sh
+
+
 USERID=$(id -u)
 R="\e[31m"
 G="\e[32m"
@@ -7,29 +10,29 @@ Y="\e[33m"
 N="\e[0m"
 
 LOGS_FOLDER="/var/log/expense-logs"
-LOG_FILE=$(echo $0 | cut -d "." -f1 )
+LOG_FILE=$(log $0 | cut -d "." -f1 )
 TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)
 LOG_FILE_NAME="$LOGS_FOLDER/$LOG_FILE-$TIMESTAMP.log"
 
 VALIDATE(){
     if [ $1 -ne 0 ]
     then
-        echo -e "$2 ... $R FAILURE $N"
+        log -e "$2 ... $R FAILURE $N"
         exit 1
     else
-        echo -e "$2 ... $G SUCCESS $N"
+        log -e "$2 ... $G SUCCESS $N"
     fi
 }
 
 CHECK_ROOT(){
     if [ $USERID -ne 0 ]
     then
-        echo "ERROR:: You must have sudo access to execute this script"
+        log "ERROR:: You must have sudo access to execute this script"
         exit 1 #other than 0
     fi
 }
 
-echo "Script started executing at: $TIMESTAMP" &>>$LOG_FILE_NAME
+log "Script started executing at: $TIMESTAMP" &>>$LOG_FILE_NAME
 
 CHECK_ROOT
 
@@ -48,7 +51,7 @@ then
     useradd expense &>>$LOG_FILE_NAME
     VALIDATE $? "Adding expense user"
 else
-    echo -e "expense user already exists ... $Y SKIPPING $N"
+    log -e "expense user already exists ... $Y SKIPPING $N"
 fi
 
 mkdir -p /app &>>$LOG_FILE_NAME
@@ -97,29 +100,29 @@ VALIDATE $? "Starting Backend"
 # N="\e[0m"
 
 # LOGS_FOLDER="/var/log/expense-logs"
-# LOG_FILE=$(echo $0 | cut -d "." -f1 )
+# LOG_FILE=$(log $0 | cut -d "." -f1 )
 # TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)
 # LOG_FILE_NAME="$LOGS_FOLDER/$LOG_FILE-$TIMESTAMP.log"
 
 # VALIDATE(){
 #     if [ $1 -ne 0 ]
 #     then
-#         echo -e "$2 ... $R FAILURE $N"
+#         log -e "$2 ... $R FAILURE $N"
 #         exit 1
 #     else
-#         echo -e "$2 ... $G SUCCESS $N"
+#         log -e "$2 ... $G SUCCESS $N"
 #     fi
 # }
 
 # CHECK_ROOT(){
 #     if [ $USERID -ne 0 ]
 #     then
-#         echo "ERROR:: You must have sudo access to execute this script"
+#         log "ERROR:: You must have sudo access to execute this script"
 #         exit 1 #other than 0
 #     fi
 # }
 
-# echo "Script started executing at: $TIMESTAMP" &>>$LOG_FILE_NAME
+# log "Script started executing at: $TIMESTAMP" &>>$LOG_FILE_NAME
 
 # CHECK_ROOT
 
@@ -138,7 +141,7 @@ VALIDATE $? "Starting Backend"
 #     useradd expense &>>$LOG_FILE_NAME
 #     VALIDATE $? "Adding expense user"
 # else
-#     echo -e "expense user already exists ... $Y SKIPPING $N"
+#     log -e "expense user already exists ... $Y SKIPPING $N"
 # fi
 
 # mkdir -p /app &>>$LOG_FILE_NAME
@@ -157,7 +160,7 @@ VALIDATE $? "Starting Backend"
 # VALIDATE $? "Installing dependencies"
 
 # if [ ! -f "$SERVICE_FILE" ]; then
-#     echo "ERROR: backend.service not found at $SERVICE_FILE" &>>$LOG_FILE_NAME
+#     log "ERROR: backend.service not found at $SERVICE_FILE" &>>$LOG_FILE_NAME
 #     exit 1
 # fi
 # cp "$SERVICE_FILE" /etc/systemd/system/backend.service &>>$LOG_FILE_NAME
@@ -170,7 +173,7 @@ VALIDATE $? "Starting Backend"
 
 # SQL_FILE="/app/schema/backend.sql"
 # if [ ! -f "$SQL_FILE" ]; then
-#     echo "ERROR: SQL schema file not found at $SQL_FILE" &>>$LOG_FILE_NAME
+#     log "ERROR: SQL schema file not found at $SQL_FILE" &>>$LOG_FILE_NAME
 #     exit 1
 # fi
 

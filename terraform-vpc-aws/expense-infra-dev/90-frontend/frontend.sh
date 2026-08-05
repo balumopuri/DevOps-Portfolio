@@ -1,5 +1,8 @@
 #!/bin/bash
 
+source /workspaces/DevOps-Portfolio/color.sh
+
+
 dnf install ansible -y
 # push
 # ansible-playbook -i inventory mysql.yaml
